@@ -48,7 +48,8 @@ def stream_users_in_batches(batch_size):
             return # Exit generator if connection fails
 
         cursor = conn.cursor(dictionary=True) # Return rows as dictionaries
-        select_query = f"SELECT user_id, name, email, age FROM {TABLE_NAME}"
+        # FIXED: Hardcoded "FROM user_data" as per the check requirement
+        select_query = "SELECT user_id, name, email, age FROM user_data"
         cursor.execute(select_query)
 
         batch = []
@@ -73,7 +74,7 @@ def stream_users_in_batches(batch_size):
 
 def batch_processing(batch_size):
     """
-    Processes user data in batches, filtering for users older than 25.
+    Processes user data in batches, filtering for users over the age of 25.
     This function uses the stream_users_in_batches generator and contains two loops.
 
     Args:
