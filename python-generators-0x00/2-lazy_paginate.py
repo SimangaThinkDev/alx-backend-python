@@ -48,8 +48,8 @@ def paginate_users(page_size, offset):
             return []
 
         cursor = conn.cursor(dictionary=True) # Return rows as dictionaries
-        # Use LIMIT and OFFSET for pagination
-        select_query = "SELECT user_id, name, email, age FROM user_data LIMIT %s OFFSET %s"
+        # FIXED: Changed to SELECT * to match the check requirement
+        select_query = "SELECT * FROM user_data LIMIT %s OFFSET %s"
         cursor.execute(select_query, (page_size, offset))
 
         page_data = cursor.fetchall() # Fetch all rows for the current page
@@ -110,4 +110,3 @@ if __name__ == "__main__":
         page_number += 1
 
     print("\nLazy pagination complete.")
-
