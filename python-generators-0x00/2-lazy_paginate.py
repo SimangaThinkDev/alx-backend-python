@@ -1,12 +1,12 @@
 import mysql.connector
 
 # --- Database Configuration ---
-# IMPORTANT: Ensure this matches your MySQL setup and the password you set.
 DB_CONFIG = {
     'host': 'localhost',
     'user': 'root',
-    'password': 'YourNewSecurePassword', # <--- REPLACE WITH YOUR ACTUAL MYSQL ROOT PASSWORD
+    'password': input("your mysql password"),
 }
+
 DATABASE_NAME = 'ALX_prodev'
 
 def connect_to_prodev():
