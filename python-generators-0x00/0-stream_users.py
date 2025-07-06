@@ -1,7 +1,6 @@
 import mysql.connector
 
 # --- Database Configuration ---
-# IMPORTANT: Ensure this matches your MySQL setup and the password you set.
 DB_CONFIG = {
     'host': 'localhost',
     'user': 'root',
