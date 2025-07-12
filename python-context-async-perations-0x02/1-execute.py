@@ -24,7 +24,7 @@ class ExecuteQuery:
         # Remove for debugging
 
 database = "users.db"
-query = "SELECT * FROM users WHERE age > 25"
+query = "SELECT * FROM users WHERE age > ?"
 
 with ExecuteQuery( database, query ) as result:
     for row in result:
