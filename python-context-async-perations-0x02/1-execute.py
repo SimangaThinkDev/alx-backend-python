@@ -26,7 +26,8 @@ class ExecuteQuery:
 database = "users.db"
 query = "SELECT * FROM users WHERE age > ?"
 
-with ExecuteQuery( database, query ) as result:
+with ExecuteQuery( "users.db", "SELECT * FROM users WHERE age > ?" ) as result:
     for row in result:
         print( row )
+
 
