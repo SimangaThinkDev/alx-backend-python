@@ -1,4 +1,6 @@
-import asyncio, aiosqlite, time
+import asyncio
+import aiosqlite
+import time
 
 print(aiosqlite.__version__)
 
