@@ -1,16 +1,19 @@
 import sqlite3
 
-class DatabaseConnection:
+class ExecuteQuery:
 
-    def __init__(this, db_name):
+    def __init__(this, db_name, query):
         this.db_name = db_name
-        this.conn = None
+        this.query = query
+        this.db, this.cursor = None, None
 
     def __enter__(this):
         """This executes when the with statement starts"""
         this.conn = sqlite3.connect(this.db_name)
-        return this.conn
-
+        this.cursor = this.conn.cursor()
+        this.cursor.execute(this.query)
+        return this.cursor.fetchall()
+    
     def __exit__(this, type, value, traceback):
         """This executes when the with statement ends"""
         if type and value and traceback:
@@ -19,12 +22,11 @@ class DatabaseConnection:
             this.conn.close()
         return True # to avoid carrying over errors
         # Remove for debugging
-        
 
-with DatabaseConnection( "users.db" ) as conn:
-    cursor = conn.cursor()
-    cursor.execute( "SELECT * FROM users" )
+database = "users.db"
+query = "SELECT * FROM users WHERE age > 25"
 
-    result = cursor.fetchall()
+with ExecuteQuery( database, query ) as result:
     for row in result:
-        print(row)
+        print( row )
+
