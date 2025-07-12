@@ -2,20 +2,10 @@ import asyncio
 import aiosqlite
 import time
 
-print(aiosqlite.__version__)
+db = None
 
-"""
-async with aiosqlite.connect(...) as db:
-    db.row_factory = aiosqlite.Row
-    async with db.execute('SELECT * FROM some_table') as cursor:
-        async for row in cursor:
-            value = row['column']
+async def async_fetch_users():
 
-    await db.execute('INSERT INTO foo some_table')
-    assert db.total_changes > 0
-"""
-
-async def async_fetch_users(db):
     """Fetches all the users"""
     start = time.time()
     db.row_factory = aiosqlite.Row
@@ -27,7 +17,8 @@ async def async_fetch_users(db):
     return True
 
 
-async def async_fetch_older_users(db):
+async def async_fetch_older_users():
+
     """Fetches all users with their age above 40"""
     # Seems we have to collect execution time as this executes slower than the other
     start = time.time()
@@ -42,10 +33,12 @@ async def async_fetch_older_users(db):
 
 async def fetch_concurrently():
     """Executes both functions synchronously"""
-    async with aiosqlite.connect("users.db") as db:
+    global db
+    async with aiosqlite.connect("users.db") as database:
+        db = database
         await asyncio.gather(
-            async_fetch_users(db),
-            async_fetch_older_users(db)
+            async_fetch_users(),
+            async_fetch_older_users()
         )
 
 
