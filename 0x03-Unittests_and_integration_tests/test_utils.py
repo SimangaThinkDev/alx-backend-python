@@ -9,10 +9,9 @@ a single test method.
 
 import unittest
 from parameterized import parameterized
-import requests
 
 # Import classes to be tested
-from . import utils
+from utils import access_nested_map
 
 class TestAccessNestedMap(unittest.TestCase):
     """
@@ -23,14 +22,14 @@ class TestAccessNestedMap(unittest.TestCase):
     @parameterized.expand([
         [{"a": 1}, ("a",), 1],
         [{"a": {"b": 2}}, ("a",), {"b": 2}],
-        [{"a": {"b": 2}}, ("a", "b"), 2]
+        [{"a": {"b": 2}}, ("a", "b"), 2],
     ])
     def test_access_nested_map(self, nested_map, path, expected):
         """
         This method tests for whether a method in our utils module
         behaves as expected
         """
-        self.assertEqual( expected, utils.access_nested_map(nested_map, path) )
+        self.assertEqual( expected, access_nested_map(nested_map, path) )
 
 
 if __name__ == "__main__":
