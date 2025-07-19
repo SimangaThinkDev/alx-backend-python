@@ -1,11 +1,13 @@
 # My environments
 sqlenv
+alx-env
 
 # stuff
 stuff.py
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
+.vscode
 *.py[codz]
 *$py.class
 
