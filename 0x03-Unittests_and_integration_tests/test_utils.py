@@ -1,3 +1,12 @@
+#!/usr/bin/env python3
+
+"""
+Implementing unit tests for the access_nested_map 
+function using the parameterized library. 
+This allows us to test multiple scenarios with 
+a single test method.
+"""
+
 import unittest
 from parameterized import parameterized
 import requests
