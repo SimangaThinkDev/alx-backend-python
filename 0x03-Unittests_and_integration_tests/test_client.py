@@ -77,14 +77,14 @@ def test_public_repos(self, mock_get_json):
             mock_get_json.assert_called_once_with(test_url)
             mock_url.assert_called_once()
 
-@parameterized.expand([
-        ({"license": {"key": "my_license"}}, "my_license", True),
-        ({"license": {"key": "other_license"}}, "my_license", False),
-    ])
-def test_has_license(self, repo, license_key, expected):
-        """Test that has_license returns the correct boolean"""
-        result = GithubOrgClient.has_license(repo, license_key)
-        self.assertEqual(result, expected)
+        @parameterized.expand([
+                ({"license": {"key": "my_license"}}, "my_license", True),
+                ({"license": {"key": "other_license"}}, "my_license", False),
+            ])
+        def test_has_license(self, repo, license_key, expected):
+                """Test that has_license returns the correct boolean"""
+                result = GithubOrgClient.has_license(repo, license_key)
+                self.assertEqual(result, expected)
 
 class TestIntegrationGithubOrgClient(unittest.TestCase):
         """Integration test for GithubOrgClient.public_repos"""
@@ -107,21 +107,21 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
             cls.get_patcher.stop()
 
 
-def test_public_repos(self):
-            """Test public_repos returns full repo list from fixture"""
-            client = GithubOrgClient("test_org")
-            self.assertEqual(
-                client.public_repos(),
-                self.expected_repos
-            )
+        def test_public_repos(self):
+                    """Test public_repos returns full repo list from fixture"""
+                    client = GithubOrgClient("test_org")
+                    self.assertEqual(
+                        client.public_repos(),
+                        self.expected_repos
+                    )
 
-def test_public_repos_with_license(self):
-            """Test public_repos filters repos by license"""
-            client = GithubOrgClient("test_org")
-            self.assertEqual(
-                client.public_repos(license="apache-2.0"),
-                self.apache2_repos
-            )
+        def test_public_repos_with_license(self):
+                    """Test public_repos filters repos by license"""
+                    client = GithubOrgClient("test_org")
+                    self.assertEqual(
+                        client.public_repos(license="apache-2.0"),
+                        self.apache2_repos
+                    )
 
 
 if __name__ == '__main__':
