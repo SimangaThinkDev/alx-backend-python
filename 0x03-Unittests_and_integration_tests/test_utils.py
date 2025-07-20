@@ -70,9 +70,8 @@ class TestGetJson(unittest.TestCase):
 
 
 class TestMemoize(unittest.TestCase):
-    """
-    Testing the Memoization technique
-    """
+    """Testing the Memoization technique"""
+    
     def test_memoize(self):
         """Test that a_method is only called once when memoized"""
 
