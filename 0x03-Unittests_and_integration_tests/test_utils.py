@@ -30,7 +30,7 @@ class TestAccessNestedMap(unittest.TestCase):
         This method tests for whether a method in our utils module
         behaves as expected
         """
-        self.assertEqual( expected, access_nested_map(nested_map, path) )
+        self.assertEqual(expected, access_nested_map(nested_map, path))
 
     @parameterized.expand([
         [{}, ("a",), KeyError],
@@ -63,15 +63,14 @@ class TestGetJson(unittest.TestCase):
         mock_get.return_value = mock_response
 
         # Call for testing
-        result = get_json( test_url )
+        result = get_json(test_url)
 
-        mock_get.assert_called_once_with( test_url )
-        self.assertEqual( get_json(test_url), test_payload )
-
+        mock_get.assert_called_once_with(test_url)
+        self.assertEqual(get_json(test_url), test_payload)
 
 class TestMemoize(unittest.TestCase):
     """Testing the Memoization technique"""
-    
+
     def test_memoize(self):
         """Test that a_method is only called once when memoized"""
 
@@ -90,8 +89,6 @@ class TestMemoize(unittest.TestCase):
             self.assertEqual(obj.a_property, 42)
             self.assertEqual(obj.a_property, 42)
             mock_method.assert_called_once()
-
-
 
 if __name__ == "__main__":
     unittest.main()
