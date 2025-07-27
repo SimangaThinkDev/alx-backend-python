@@ -1,62 +1,77 @@
-# messaging_app/chats/serializers.py
-
 from rest_framework import serializers
-from .models import User, Conversation, Message
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+
+# from django.utils.translation import ugettext_lazy as _
+from django.contrib.auth import get_user_model
+from .models import Conversation, Message
+
+
+User = get_user_model()
 
 
 class UserSerializer(serializers.ModelSerializer):
-    full_name = serializers.SerializerMethodField()
-
     class Meta:
         model = User
-        fields = [
-            'user_id',
-            'first_name',
-            'last_name',
-            'email',
-            'phone_number',
-            'role',
-            'created_at',
-            'full_name',
-        ]
-
-    def get_full_name(self, obj):
-        return f"{obj.first_name} {obj.last_name}"
+        fields = ("first_name", "last_name", "phone_number", "id")
 
 
-class MessageSerializer(serializers.ModelSerializer):
-    sender = UserSerializer(read_only=True)
-    message_body = serializers.CharField()
-
-    class Meta:
-        model = Message
-        fields = [
-            'message_id',
-            'sender',
-            'message_body',
-            'sent_at',
-        ]
-
-    def validate_message_body(self, value):
-        if not value.strip():
-            raise serializers.ValidationError("Message body cannot be empty.")
-        return value
+# class LoginSerializers(serializers.Serializer):
+#    email = serializers.CharField(max_length=255)
+#    password = serializers.CharField(
+#        label=_("password"),
+#        style={"input_type": "password"},
+#        trim_whitespace=False,
+#        max_length=128,
+#        write_only=True,
+#    )
+#
+#    def validate(self, data):
+#        username = data.get("email")
+#        password = data.get("password")
+#
+#        if username and password:
+#            user = authenticate(
+#                request=self.context.get("request"),
+#                username=username,
+#                password=password,
+#            )
+#            if not user:
+#                msg = _("Unable to log in with provided credentials.")
+#                raise serializers.ValidationError(msg, code="authorization")
+#        else:
+#            msg = _('Must include "username" and "password".')
+#            raise serializers.ValidationError(msg, code="authorization")
+#
+#        data["user"] = user
+#        return data
 
 
 class ConversationSerializer(serializers.ModelSerializer):
-    participants = UserSerializer(many=True, read_only=True)
-    messages = MessageSerializer(many=True, read_only=True)
-    participant_names = serializers.SerializerMethodField()
+    messages = serializers.SerializerMethodField()
+    id = serializers.CharField(max_length=80)
 
     class Meta:
         model = Conversation
-        fields = [
-            'conversation_id',
-            'participants',
-            'participant_names',
-            'messages',
-            'created_at',
-        ]
 
-    def get_participant_names(self, obj):
-        return [f"{user.first_name} {user.last_name}" for user in obj.participants.all()]
+        fields = ["conversationid", "participants", "created_at", "messages"]
+
+    def get_messages(self, obj):
+        ret = Message.objects.filter(conversation=obj)
+        if not len(ret):
+            raise serializers.ValidationError("Empty conversation")
+        return MessageSerializer(ret, many=True).data
+
+
+class MessageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Message
+        fields = "__all__"
+
+
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+        # Add custom claims
+        token["email"] = user.email
+        return token
