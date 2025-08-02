@@ -42,6 +42,7 @@ class Message(models.Model):
         """
         Returns a string representation of the message.
         """
+        edited_by = self.sender.username
         return f'From {self.sender.username} to {self.receiver.username} at {self.timestamp}'
 
 class MessageHistory(models.Model):
