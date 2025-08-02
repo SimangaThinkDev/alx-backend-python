@@ -25,6 +25,10 @@ class Message(models.Model):
         auto_now_add=True,
         verbose_name='Timestamp'
     )
+    edited = models.BooleanField(
+        default=False,
+        verbose_name='Edited'
+    )
 
     class Meta:
         """
@@ -39,6 +43,38 @@ class Message(models.Model):
         Returns a string representation of the message.
         """
         return f'From {self.sender.username} to {self.receiver.username} at {self.timestamp}'
+
+class MessageHistory(models.Model):
+    """
+    A model to store the history of edited messages.
+    """
+    message = models.ForeignKey(
+        Message,
+        on_delete=models.CASCADE,
+        related_name='history',
+        verbose_name='Original Message'
+    )
+    content = models.TextField(
+        verbose_name='Old Content'
+    )
+    edited_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name='Edited At'
+    )
+
+    class Meta:
+        """
+        Meta options for the MessageHistory model.
+        """
+        ordering = ['-edited_at']
+        verbose_name = 'Message History'
+        verbose_name_plural = 'Message Histories'
+
+    def __str__(self):
+        """
+        Returns a string representation of the message history.
+        """
+        return f'History for message {self.message.id} edited at {self.edited_at}'
 
 
 class Notification(models.Model):
