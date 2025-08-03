@@ -5,4 +5,5 @@ urlpatterns = [
     path( '', views.index, name='homepage' ),
     path('message/<int:message_id>/history/', views.message_history, name='message_history'),
     path('delete-account/', views.delete_user, name='delete_user'),
+    path( 'messaging/inbox/unread/', views.inbox_unread ),
 ]

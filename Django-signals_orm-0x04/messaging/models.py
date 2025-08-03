@@ -2,6 +2,14 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
 
+class UnreadMessagesManager(models.Manager):
+    def unread_for_user(self, user):
+        """
+        Returns a QuerySet of unread messages for a given user.
+        """
+        return self.filter(receiver=user, read=False)
+
+
 class Message(models.Model):
     """
     A model to store messages between users.
@@ -28,6 +36,10 @@ class Message(models.Model):
     edited = models.BooleanField(
         default=False,
         verbose_name='Edited'
+    )
+    read = models.BooleanField(
+        default=False,
+        verbose_name='Read'
     )
 
     class Meta:

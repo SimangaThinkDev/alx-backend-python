@@ -47,3 +47,20 @@ def delete_user(request):
     
     # If the request is a GET, display a confirmation page
     return render(request, 'messaging/delete_account_confirm.html')
+
+
+@login_required
+def inbox_unread(request):
+    """
+    View to display only the unread messages for the logged-in user.
+    """
+    # Use the custom manager and optimize the query with .select_related() and .only()
+    unread_messages = Message.objects.unread_for_user(request.user).select_related('sender').only(
+        'content', 'timestamp', 'sender',
+    )
+
+    context = {
+        'unread_messages': unread_messages,
+    }
+    return render(request, 'messaging/inbox_unread.html', context)
+
