@@ -1,6 +1,7 @@
-from django.db.models.signals import post_save, pre_save
+from django.db.models.signals import post_save, pre_save, post_delete
 from django.dispatch import receiver
 from .models import Message, Notification, MessageHistory
+from django.contrib.auth.models import User
 
 # My Signals here
 
@@ -47,3 +48,12 @@ def log_message_history(sender, instance, **kwargs):
             # This should not happen in normal circumstances but is good practice to handle
             pass
 
+
+@receiver( post_delete, sender=User )
+def clean_up_after_user( sender, instance, **kwargs ):
+    """
+    If we look back at the database schema we have
+    It seems this is already dealt with, Thanks
+    """
+    print(f"User {instance.username} has been deleted. Related data cleaned up.")
+    pass

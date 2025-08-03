@@ -1,6 +1,8 @@
 from django.urls import path
-from .views import message_history
+from . import views
 
 urlpatterns = [
-    path('message/<int:message_id>/history/', message_history, name='message_history'),
+    path( '', views.index, name='homepage' ),
+    path('message/<int:message_id>/history/', views.message_history, name='message_history'),
+    path('delete-account/', views.delete_user, name='delete_user'),
 ]
