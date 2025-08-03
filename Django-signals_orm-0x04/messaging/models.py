@@ -3,11 +3,13 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 from .managers import UnreadMessagesManager # Import the custom manager
 
-
 class Message(models.Model):
     """
     A model to store messages between users.
     """
+    # Assign the custom manager to the objects attribute
+    objects = UnreadMessagesManager()
+
     sender = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -31,9 +33,9 @@ class Message(models.Model):
         default=False,
         verbose_name='Edited'
     )
-    read = models.BooleanField(
-        default=False,
-        verbose_name='Read'
+    unread = models.BooleanField(
+        default=True,
+        verbose_name='Unread'
     )
 
     class Meta:
@@ -48,41 +50,7 @@ class Message(models.Model):
         """
         Returns a string representation of the message.
         """
-        edited_by = self.sender.username
         return f'From {self.sender.username} to {self.receiver.username} at {self.timestamp}'
-
-class MessageHistory(models.Model):
-    """
-    A model to store the history of edited messages.
-    """
-    message = models.ForeignKey(
-        Message,
-        on_delete=models.CASCADE,
-        related_name='history',
-        verbose_name='Original Message'
-    )
-    content = models.TextField(
-        verbose_name='Old Content'
-    )
-    edited_at = models.DateTimeField(
-        auto_now_add=True,
-        verbose_name='Edited At'
-    )
-
-    class Meta:
-        """
-        Meta options for the MessageHistory model.
-        """
-        ordering = ['-edited_at']
-        verbose_name = 'Message History'
-        verbose_name_plural = 'Message Histories'
-
-    def __str__(self):
-        """
-        Returns a string representation of the message history.
-        """
-        return f'History for message {self.message.id} edited at {self.edited_at}'
-
 
 class Notification(models.Model):
     """
@@ -128,4 +96,37 @@ class Notification(models.Model):
         """
         Returns a string representation of the notification.
         """
-        return f'Notification for {self.user.username}: {self.content[:30]}...' # for design
+        return f'Notification for {self.user.username}: {self.content[:30]}...'
+
+
+class MessageHistory(models.Model):
+    """
+    A model to store the history of edited messages.
+    """
+    message = models.ForeignKey(
+        Message,
+        on_delete=models.CASCADE,
+        related_name='history',
+        verbose_name='Original Message'
+    )
+    content = models.TextField(
+        verbose_name='Old Content'
+    )
+    edited_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name='Edited At'
+    )
+
+    class Meta:
+        """
+        Meta options for the MessageHistory model.
+        """
+        ordering = ['-edited_at']
+        verbose_name = 'Message History'
+        verbose_name_plural = 'Message Histories'
+
+    def __str__(self):
+        """
+        Returns a string representation of the message history.
+        """
+        return f'History for message {self.message.id} edited at {self.edited_at}'
