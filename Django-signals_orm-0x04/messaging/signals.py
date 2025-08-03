@@ -55,5 +55,18 @@ def clean_up_after_user( sender, instance, **kwargs ):
     If we look back at the database schema we have
     It seems this is already dealt with, Thanks
     """
+    
+    # Delete messages sent by the user
+    Message.objects.filter(sender=instance).delete()
+    
+    # Delete messages received by the user
+    Message.objects.filter(receiver=instance).delete()
+    
+    # Delete notifications for the user
+    Notification.objects.filter(user=instance).delete()
+    
+    # Delete message history related to the user's messages
+    MessageHistory.objects.filter(message__sender=instance).delete()
+    MessageHistory.objects.filter(message__receiver=instance).delete()
     print(f"User {instance.username} has been deleted. Related data cleaned up.")
     pass
