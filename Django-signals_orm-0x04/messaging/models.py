@@ -42,9 +42,9 @@ class Message(models.Model):
         default=False,
         verbose_name='Edited'
     )
-    unread = models.BooleanField(
-        default=True,
-        verbose_name='Unread'
+    read = models.BooleanField(
+        default=False,
+        verbose_name='Read'
     )
 
     class Meta:
