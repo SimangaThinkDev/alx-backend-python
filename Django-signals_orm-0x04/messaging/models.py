@@ -46,6 +46,10 @@ class Message(models.Model):
         default=False,
         verbose_name='Read'
     )
+    unread = models.BooleanField(
+        default=True,
+        verbose_name='Unread'
+    )
 
     class Meta:
         """
