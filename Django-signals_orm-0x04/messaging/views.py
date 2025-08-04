@@ -35,7 +35,7 @@ def inbox_unread(request):
     View to display only the unread messages for the logged-in user.
     """
     # Use the custom manager and optimize the query with .select_related() and .only()
-    unread_messages = Message.objects.unread_for_user(request.user).select_related('sender').only(
+    unread_messages = Message.unread.unread_for_user(request.user).select_related('sender').only(
         'content', 'timestamp', 'sender',
     )
 
