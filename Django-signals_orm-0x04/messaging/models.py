@@ -10,6 +10,15 @@ class Message(models.Model):
     # Assign the custom manager to the objects attribute
     objects = UnreadMessagesManager()
 
+    parent_message = models.ForeignKey(
+        'self',
+        on_delete=models.SET_NULL,
+        related_name='replies',
+        null=True,
+        blank=True,
+        verbose_name='Parent Message'
+    )
+
     sender = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -77,7 +86,6 @@ class Notification(models.Model):
     )
     is_read = models.BooleanField(
         default=False,
-        verbose_name='Is Read'
     )
     created_at = models.DateTimeField(
         auto_now_add=True,
