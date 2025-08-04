@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q, Prefetch # Import Prefetch for nested prefetching
+from django.views.decorators.cache import cache_page # Import the cache decorator
 from .models import Message
 
 @login_required
@@ -11,10 +12,6 @@ def inbox_optimized(request):
     It fetches all top-level messages and their replies in a minimal number of queries.
     """
     # Fetch top-level messages where the user is either the sender or the receiver.
-    # .select_related('sender', 'receiver') joins the User table for both sender and receiver
-    # in the initial query, preventing an N+1 query problem for those fields.
-    # .prefetch_related('replies') fetches all replies for the top-level messages
-    # in a single subsequent query, which also avoids the N+1 problem.
     messages = Message.objects.filter(
         Q(sender=request.user) | Q(receiver=request.user),
         parent_message__isnull=True
@@ -34,7 +31,7 @@ def inbox_unread(request):
     """
     View to display only the unread messages for the logged-in user.
     """
-    # Use the custom manager and optimize the query with .select_related() and .only()
+    # Use the custom manager to filter for unread messages
     unread_messages = Message.unread.unread_for_user(request.user).select_related('sender').only(
         'content', 'timestamp', 'sender',
     )
@@ -95,6 +92,7 @@ def build_reply_tree(message):
         
     return list(replies)
 
+@cache_page(60) # Cache this view for 60 seconds
 @login_required
 def message_thread(request, message_id):
     """
