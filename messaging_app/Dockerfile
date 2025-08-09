@@ -19,4 +19,4 @@ COPY . /app/
 EXPOSE 8000
 
 # Default command to run Django server
-CMD ["python", "manage.py", "runserver"]
+CMD ["python", "manage.py", "runserver", "-p", "localhost/8000"]
