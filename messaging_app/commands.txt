@@ -1,0 +1,3 @@
+kubectl describe ingress messaging-app-ingress
+
+kubectl apply -f ingress.yaml
