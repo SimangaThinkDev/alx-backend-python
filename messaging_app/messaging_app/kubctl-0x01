@@ -1,0 +1,11 @@
+#!/bin/bash
+
+kubectl scale --replicas=5
+
+kubectl get pods
+
+wrk
+
+kubectl top
+
+#
