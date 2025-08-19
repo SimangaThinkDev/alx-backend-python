@@ -1,5 +1,5 @@
 from django.urls import include, path
-from chats.views import ConversationViewSet, MessageViewSet
+from messaging_app.chats.views import ConversationViewSet, MessageViewSet
 from rest_framework import routers
 from rest_framework_nested.routers import NestedDefaultRouter
 

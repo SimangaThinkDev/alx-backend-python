@@ -9,7 +9,7 @@ from rest_framework.response import Response
 # from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework import filters
 
-from chats.serializers import (
+from messaging_app.chats.serializers import (
     ConversationSerializer,
     MessageSerializer,
 )
