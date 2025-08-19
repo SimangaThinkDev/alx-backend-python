@@ -1,0 +1,6 @@
+#!/bin/bash
+
+minikube start
+
+echo "-----------"
+kubectl cluster-info
