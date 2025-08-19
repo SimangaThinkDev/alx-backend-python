@@ -1,6 +1,6 @@
 #!/bin/bash
 
-kubectl scale deployment --replicas=5
+kubectl scale deployment --replicas=3
 
 kubectl get pods
 
