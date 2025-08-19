@@ -4,3 +4,6 @@ minikube start
 
 echo "-----------"
 kubectl cluster-info
+
+kubectl get pods
+
