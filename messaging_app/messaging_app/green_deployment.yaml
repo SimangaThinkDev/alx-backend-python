@@ -1,0 +1,28 @@
+# green_deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: django-app-green
+  labels:
+    app: django-app
+    version: green # Label to identify the green version
+spec:
+  replicas: 3 # Or your desired replica count
+  selector:
+    matchLabels:
+      app: django-app
+      version: green
+  template:
+    metadata:
+      labels:
+        app: django-app
+        version: green
+    spec:
+      containers:
+      - name: django-app
+        image: your-repo/django-app:2.0.0 # Replace with your green app image and a new tag
+        ports:
+        - containerPort: 8000 # Your Django app's port
+        env:
+        - name: APP_COLOR
+          value: "green" # Environment variable to distinguish versions
