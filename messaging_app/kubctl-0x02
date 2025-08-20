@@ -1,0 +1,62 @@
+#!/bin/bash
+
+NAMESPACE="default" # Or your application's namespace
+
+echo "--- Deploying Blue Version (Current Stable) ---"
+kubectl apply -f blue_deployment.yaml # Assuming blue_deployment.yaml is for messaging-app-blue
+
+echo "--- Deploying Green Version (New Version) ---"
+kubectl apply -f green_deployment.yaml # Assuming green_deployment.yaml is for messaging-app-green
+
+echo "--- Deploying Services (including the Production Service pointing to Blue) ---"
+kubectl apply -f kubeservice.yaml
+
+echo "--- Applying Ingress Configuration (pointing to the Production Service) ---"
+# Assuming your ingress.yaml points to messaging-app-prod-service
+# You might need to update your ingress.yaml to reflect 'messaging-app-prod-service'
+kubectl apply -f ingress.yaml
+
+echo "--- Waiting for Green Deployment pods to be Ready ---"
+kubectl wait --for=condition=Available deployment/messaging-app-green --timeout=300s -n ${NAMESPACE}
+
+echo "--- Checking logs of the Green Deployment (messaging-app-green) for errors ---"
+# Fetch logs from one of the green pods. Adjust -c if your container has a different name.
+GREEN_POD=$(kubectl get pods -n ${NAMESPACE} -l app=messaging-app,version=green -o jsonpath='{.items[0].metadata.name}')
+if [ -n "$GREEN_POD" ]; then
+  echo "Fetching logs from pod: ${GREEN_POD}"
+  kubectl logs ${GREEN_POD} -n ${NAMESPACE}
+else
+  echo "No green pods found or ready yet. Check 'kubectl get pods -n ${NAMESPACE}'"
+fi
+
+echo "--- Test the new green version internally if possible before switching traffic ---"
+echo "You can use port-forwarding for internal testing, e.g.:"
+echo "kubectl port-forward svc/messaging-app-green-service 8080:8000 -n ${NAMESPACE}"
+echo "Then access http://localhost:8080"
+
+read -p "Press Enter to switch production traffic to the Green Version..."
+
+echo "--- Switching production traffic to Green Version ---"
+# Patch the production service selector to point to the green deployment
+kubectl patch service messaging-app-prod-service -n ${NAMESPACE} -p '{"spec":{"selector":{"version":"green"}}}'
+
+echo "--- Traffic successfully switched to Green Version! ---"
+
+echo "--- Verifying the Production Service is now routing to Green ---"
+kubectl get service messaging-app-prod-service -n ${NAMESPACE} -o yaml | grep "version: green"
+
+echo "--- Checking logs of the Green Deployment again after switch ---"
+# Fetch logs from one of the green pods again to observe new traffic
+if [ -n "$GREEN_POD" ]; then
+  echo "Fetching logs from pod: ${GREEN_POD}"
+  kubectl logs ${GREEN_POD} -n ${NAMESPACE} | tail -n 20 # Show last 20 lines
+else
+  echo "Green pods not found. Something went wrong."
+fi
+
+read -p "Press Enter to clean up the old Blue Version (optional)..."
+
+echo "--- Deleting old Blue Version deployment ---"
+kubectl delete deployment messaging-app-blue -n ${NAMESPACE}
+
+echo "--- Blue-Green Deployment complete. ---"

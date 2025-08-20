@@ -1,0 +1,54 @@
+# kubeservice.yaml
+
+# Service for the blue deployment (for internal testing/direct access if needed)
+apiVersion: v1
+kind: Service
+metadata:
+  name: messaging-app-blue-service # Renamed
+  namespace: default # Adjust if your app is in a different namespace
+spec:
+  selector:
+    app: messaging-app # Updated
+    version: blue
+  ports:
+    - protocol: TCP
+      port: 8000
+      targetPort: 8000
+  type: ClusterIP # Internal service
+
+---
+
+# Service for the green deployment (for internal testing/direct access if needed)
+apiVersion: v1
+kind: Service
+metadata:
+  name: messaging-app-green-service # Renamed
+  namespace: default # Adjust if your app is in a different namespace
+spec:
+  selector:
+    app: messaging-app # Updated
+    version: green
+  ports:
+    - protocol: TCP
+      port: 8000
+      targetPort: 8000
+  type: ClusterIP # Internal service
+
+---
+
+# Production Service: This is the service that the Ingress will point to.
+# Its selector will be updated to switch traffic between blue and green.
+apiVersion: v1
+kind: Service
+metadata:
+  name: messaging-app-prod-service # Renamed
+  namespace: default # Adjust if your app is in a different namespace
+spec:
+  selector:
+    app: messaging-app # Updated
+    version: blue # Initially points to the blue deployment
+  ports:
+    - protocol: TCP
+      port: 8000
+      targetPort: 8000
+  type: ClusterIP # Or LoadBalancer if you expose it directly, but Ingress is preferred

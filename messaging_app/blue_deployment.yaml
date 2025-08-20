@@ -1,0 +1,28 @@
+# blue_deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: django-app-blue
+  labels:
+    app: django-app
+    version: blue # Label to identify the blue version
+spec:
+  replicas: 3 # Or your desired replica count
+  selector:
+    matchLabels:
+      app: django-app
+      version: blue
+  template:
+    metadata:
+      labels:
+        app: django-app
+        version: blue
+    spec:
+      containers:
+      - name: django-app
+        image: your-repo/django-app:1.0.0 # Replace with your blue app image and tag
+        ports:
+        - containerPort: 8000 # Your Django app's port
+        env:
+        - name: APP_COLOR
+          value: "blue" # Environment variable to distinguish versions
