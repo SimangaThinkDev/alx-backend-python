@@ -1,0 +1,20 @@
+#!/bin/bash
+
+NAMESPACE="default" # Or your application's namespace
+APP_DEPLOYMENT="messaging-app-blue" # Name of your deployment to update
+
+echo "--- Applying updated blue_deployment.yaml to trigger a rolling update ---"
+kubectl apply -f blue_deployment.yaml
+
+echo "--- Monitoring rolling update progress for deployment/${APP_DEPLOYMENT} ---"
+kubectl rollout status deployment/${APP_DEPLOYMENT} -n ${NAMESPACE} --timeout=300s
+
+echo "--- Rolling Update Process Completed ---"
+
+echo "--- Verifying the current pods after rolling update ---"
+kubectl get pods -n ${NAMESPACE} -l app=messaging-app -o wide
+
+echo "--- Verifying the image version of the new pods ---"
+kubectl get deployment ${APP_DEPLOYMENT} -n ${NAMESPACE} -o jsonpath='{.spec.template.spec.containers[0].image}'
+
+echo "--- Rolling update verification complete. ---"
