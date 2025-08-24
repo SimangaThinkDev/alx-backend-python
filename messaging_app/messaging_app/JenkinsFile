@@ -1,0 +1,43 @@
+pipeline {
+    agent any
+
+    environment {
+        VENV_DIR = 'venv'
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'main',
+                    url: 'https://github.com/sewalewsetotaw/alx-backend-python.git',
+                    credentialsId: 'sewalewsetotaw'
+            }
+        }
+
+        stage('Setup Python Env') {
+            steps {
+                sh '''
+                    python3 -m venv venv
+                    . venv/bin/activate
+                    pip3 install --upgrade pip
+                    pip3 install -r messaging_app/requirements.txt
+                '''
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                sh '''
+                    . venv/bin/activate
+                    pytest messaging_app/tests --junitxml=report.xml
+                '''
+            }
+        }
+
+        stage('Publish Report') {
+            steps {
+                junit 'report.xml'
+            }
+        }
+    }
+}
