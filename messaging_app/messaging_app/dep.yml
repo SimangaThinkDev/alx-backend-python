@@ -1,0 +1,25 @@
+name: Deploy Docker Image
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ["main"]
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build Docker Image
+        run: docker build -t your-dockerhub-username/messaging_app:latest messaging_app
+
+      - name: Push Docker Image
+        run: docker push your-dockerhub-username/messaging_app:latest
+
